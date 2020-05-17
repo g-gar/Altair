@@ -1,9 +1,9 @@
-package com.ggar.altair;
+package com.ggar.framework.application;
 
 import com.magc.sensecane.framework.container.Container;
 import com.magc.sensecane.framework.container.DefaultContainer;
 
-public class AbstractApplication implements Container {
+public abstract class AbstractApplication implements Container {
 
 	protected final Container container;
 	
@@ -46,7 +46,5 @@ public class AbstractApplication implements Container {
 	public <T> T get(Class<T> clazz) {
 		return container.get(clazz);
 	}
-
-	
 	
 }
