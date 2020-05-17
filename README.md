@@ -1,6 +1,6 @@
 # Altair
 
-## Supported feautres
+## Supported features
 - [x] HTTP links (urls)
 - [ ] PDFs
 - [ ] Music
