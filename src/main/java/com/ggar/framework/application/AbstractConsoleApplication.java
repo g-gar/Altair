@@ -28,7 +28,6 @@ public abstract class AbstractConsoleApplication<T extends MenuItem> extends Abs
 	@Override
 	public T askChoice() {		
 		final Integer choice = ask("Insert your choice: ", 10, e -> Integer.parseInt(e));
-		System.out.println(choice);
 		return items.stream()
 				.filter(e -> choice != null && e.getValue().equals(choice))
 				.findFirst().orElse(null);

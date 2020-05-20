@@ -143,7 +143,7 @@ public class Application extends AbstractConsoleApplication<ConsoleMenuItem> imp
 
 	@Override
 	public void listAllUrls() {
-		print(container.get(DaoContainer.class).get(Url.class).findAll());
+		print(container.get(DaoContainer.class).get(Url.class).findAll().stream().map(e->String.format("%s. %s", e.getId(), e.getValue())).collect(Collectors.toList()));
 	}
 
 	@Override
