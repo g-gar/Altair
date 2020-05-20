@@ -1,6 +1,7 @@
 package com.ggar.altair.service;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class UrlService extends AbstractService {
 	}
 
 	public Boolean addUrl(String url) {
-		Integer time = (int) new Timestamp(System.currentTimeMillis()).getTime();
+		Long time = Instant.now().getEpochSecond();
 		return super.getDao(Url.class).insert(new Url(null, url, time)) != null;
 	}
 	

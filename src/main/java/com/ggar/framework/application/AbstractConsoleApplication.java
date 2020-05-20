@@ -57,6 +57,7 @@ public abstract class AbstractConsoleApplication<T extends MenuItem> extends Abs
 		
 		try {
 			scanner = new Scanner(System.in);
+			scanner.useDelimiter("(\\r\\n|\\r|\\n)");
 			System.out.print(message);
 			result = fn.apply(scanner.next().replace("\n", ""));
 		} catch (Exception e) {

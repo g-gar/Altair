@@ -1,6 +1,7 @@
 package com.ggar.altair;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,8 +23,9 @@ import com.magc.sensecane.framework.dao.DaoContainer;
 import com.magc.sensecane.framework.database.connection.factory.ConnectionFactory;
 import com.magc.sensecane.framework.database.connection.pool.ConnectionPool;
 import com.magc.sensecane.framework.database.connection.properties.ConnectionProperties;
-import com.magc.sensecane.framework.database.implementation.sqlite.SQLiteConnectionFactory;
-import com.magc.sensecane.framework.database.implementation.sqlite.SQLiteConnectionPool;
+import com.magc.sensecane.framework.database.implementation.mysql.MySQLConnectionFactory;
+import com.magc.sensecane.framework.database.implementation.mysql.MySQLConnectionPool;
+import com.magc.sensecane.framework.database.implementation.mysql.MySQLConnectionProperties;
 import com.magc.sensecane.framework.database.implementation.sqlite.SQLiteConnectionProperties;
 import com.magc.sensecane.framework.utils.LoadResource;
 
@@ -58,9 +60,9 @@ public class Application extends AbstractConsoleApplication<ConsoleMenuItem> imp
 		
 		LoadResource lr = new LoadResource();
 		
-		ConnectionProperties properties = register(ConnectionProperties.class, new SQLiteConnectionProperties(lr.execute("altair.db").toString()));
-		ConnectionFactory<SQLiteConnectionProperties> factory = register(ConnectionFactory.class, new SQLiteConnectionFactory());
-		ConnectionPool pool = register(ConnectionPool.class, new SQLiteConnectionPool(this));
+		ConnectionProperties properties = register(ConnectionProperties.class, new MySQLConnectionProperties("jdbc:mysql://localhost:3306", "root", "", "altair"));
+		ConnectionFactory<SQLiteConnectionProperties> factory = register(ConnectionFactory.class, new MySQLConnectionFactory());
+		ConnectionPool pool = register(ConnectionPool.class, new MySQLConnectionPool(this));
 		DaoContainer daocontainer = register(DaoContainer.class, new DaoContainer());
 		
 		pool.configure(10);
@@ -92,8 +94,18 @@ public class Application extends AbstractConsoleApplication<ConsoleMenuItem> imp
 		List<Url> urls;
 		switch (choice) {
 		case ADD_URL:
-			url = new Url(null, super.ask("URL: "), 0);
-			tags = Arrays.asList(super.ask("Tags: ").split(",{1}\\s*")).stream()
+			url = new Url(null, super.ask("URL: "), Instant.now().getEpochSecond());
+			
+			Url _url = url;
+			Url temp = urldao.findAll().stream()
+				.filter(e -> e.getValue().equals(_url.getValue())).findFirst().orElse(null);
+			if (temp != null) {
+				url = temp;
+			} else {
+				url = urldao.insertOrUpdate(url);
+			}
+
+			tags = Arrays.asList(super.ask("Tags: ").split(",{0,1}\\s{1,}")).stream()
 					.map(e -> {
 						Integer id = tagdao.findAll().stream()
 								.filter(t -> t.getName().equals(e)).map(Tag::getId)
